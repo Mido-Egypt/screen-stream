@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<button onclick="start()">بدء بث الشاشة</button>
+
+<script>
+const ws = new WebSocket(`wss://${location.host}/ws/stream/SID`);
+
+async function start(){
+  await navigator.mediaDevices.getDisplayMedia({video:true});
+  ws.send("STREAM STARTED");
+}
+</script>
+</body>
+</html>.
