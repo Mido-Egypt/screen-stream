@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h3>👁️ المراقبة</h3>
+<script>
+const ws = new WebSocket(`wss://${location.host}/ws/owner/SID`);
+ws.onmessage = e => console.log(e.data);
+</script>
+</body>
+</html>
