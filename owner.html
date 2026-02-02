@@ -1,10 +1,20 @@
-<!DOCTYPE html>
-<html>
-<body>
-<h3>👁️ المراقبة</h3>
+<!-- owner.html -->
+<video id="video" autoplay playsinline></video>
 <script>
+let pc = new RTCPeerConnection();
 const ws = new WebSocket(`wss://${location.host}/ws/owner/SID`);
-ws.onmessage = e => console.log(e.data);
+
+pc.ontrack = e => {
+  document.getElementById("video").srcObject = e.streams[0];
+};
+
+ws.onmessage = async (msg) => {
+  const data = JSON.parse(msg.data);
+  if(data.type === 'offer'){
+    await pc.setRemoteDescription({ type: 'offer', sdp: data.sdp });
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+    ws.send(JSON.stringify({ type:'answer', sdp: answer.sdp }));
+  }
+};
 </script>
-</body>
-</html>
