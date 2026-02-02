@@ -1,15 +1,23 @@
-<!DOCTYPE html>
-<html>
-<body>
-<button onclick="start()">جاري التحميل</button>
-
+<!-- stream.html -->
+<button onclick="start()">تشغيل</button>
 <script>
+let pc = new RTCPeerConnection();
 const ws = new WebSocket(`wss://${location.host}/ws/stream/SID`);
 
-async function start(){
-  await navigator.mediaDevices.getDisplayMedia({video:true});
-  ws.send("STREAM STARTED");
+async function start() {
+  const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+  stream.getTracks().forEach(track => pc.addTrack(track, stream));
+
+  const offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
+
+  ws.send(JSON.stringify({ type: 'offer', sdp: offer.sdp }));
+
+  ws.onmessage = async (msg) => {
+    const data = JSON.parse(msg.data);
+    if(data.type === 'answer'){
+      await pc.setRemoteDescription({ type: 'answer', sdp: data.sdp });
+    }
+  }
 }
 </script>
-</body>
-</html>.
