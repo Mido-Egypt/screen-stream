@@ -1,10 +1,8 @@
 #!/bin/bash
 
-# توليد SID عشوائي (8 حروف + أرقام)
 SID=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8)
 
-# الرابط الأساسي
-BASE_URL=https://scope-batch-continuous-wishes.trycloudflare.com
+read -p "حط رابط Cloudflare: " BASE_URL
 
 echo "=========================="
 echo "SID المستخدم : $SID"
